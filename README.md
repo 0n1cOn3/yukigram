@@ -1,6 +1,6 @@
 ﻿# Yukigram: [64Gram](https://github.com/TDesktop-x64/tdesktop) fork – Based on [Telegram Desktop](https://github.com/telegramdesktop/tdesktop)
 
-Install it from [our binary caches](https://yukigram.github.io/yukigram), build it yourself from [PKGBUILD (semi-abandoned)](https://github.com/yukigram/yukigram-pkgbuild), or use nix (with or without flakes).
+Install it from [our binary caches](https://yukigram.github.io/yukigram) (postmarketOS, nix flakes, flatpak), build it yourself from [PKGBUILD (semi-abandoned)](https://github.com/yukigram/yukigram-pkgbuild), or use nix (with or without flakes).
 
 ---
 

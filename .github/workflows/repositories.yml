@@ -246,6 +246,7 @@ jobs:
             repo = "yukigram";
             rev = "${{ github.sha }}";
             sha256 = "$(cat website/narHash)";
+            fetchSubmodules = true;
           }) {}</pre>
           <h2>Binary cache</h2>
           <p>To use the binary cache, specify <code>https://yukigram.github.io/yukigram</code> as an extra substituter, and <code>$(cat website/narPublicKey)</code> as an extra trusted key. Note that the binary cache is only provided for the Nixpkgs version pinned in the flake.</p>

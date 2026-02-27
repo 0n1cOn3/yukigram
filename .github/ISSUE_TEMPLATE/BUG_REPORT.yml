@@ -56,9 +56,10 @@ body:
       options:
         - Our PostmarketOS binary cache
         - Our Nix binary cache
+        - Our Flatpak repository
         - Manually-built nix package
         - Manually-built PKGBUILD
-        # - Manually-built flatpak
+        - Manually-built flatpak
         - Source build with docker image
         - Other (please specify)
     validations:

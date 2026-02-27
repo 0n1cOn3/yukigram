@@ -250,6 +250,9 @@ jobs:
           }) {}</pre>
           <h2>Binary cache</h2>
           <p>To use the binary cache, specify <code>https://yukigram.github.io/yukigram</code> as an extra substituter, and <code>$(cat website/narPublicKey)</code> as an extra trusted key. Note that the binary cache is only provided for the Nixpkgs version pinned in the flake.</p>
+          <h1>Yukigram flatpak repository</h1>
+          <pre>flatpak remote-add --user --if-not-exists yukigram https://yukigram.github.io/yukigram-flatpak/index.flatpakrepo
+          flatpak install sylfn.Yukigram</pre>
           </body>
           </html>
           EOF

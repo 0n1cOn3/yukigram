@@ -234,7 +234,7 @@ bool GenerateDesktopFile(
 	DEBUG_LOG(("App Info: placing .desktop file to %1").arg(targetPath));
 	if (!QDir(targetPath).exists()) QDir().mkpath(targetPath);
 
-	const auto sourceFile = u":/misc/sylfn.Yukigram.desktop"_q;
+	const auto sourceFile = u":/misc/io.github.yukigram.desktop"_q;
 	const auto targetFile = targetPath
 		+ QGuiApplication::desktopFileName()
 		+ u".desktop"_q;
@@ -372,7 +372,7 @@ bool GenerateDesktopFile(
 		hashMd5Hex(d.constData(), d.size(), md5Hash);
 
 		if (!Core::Launcher::Instance().customWorkingDir()) {
-			QFile::remove(u"%1sylfn.Yukigram._%2.desktop"_q.arg(
+			QFile::remove(u"%1io.github.yukigram._%2.desktop"_q.arg(
 				targetPath,
 				md5Hash));
 
@@ -381,7 +381,7 @@ bool GenerateDesktopFile(
 			hashMd5Hex(exePath.constData(), exePath.size(), md5Hash);
 		}
 
-		QFile::remove(u"%1sylfn.Yukigram.desktop"_q.arg(
+		QFile::remove(u"%1io.github.yukigram.desktop"_q.arg(
 			targetPath));
 	}
 
@@ -439,7 +439,7 @@ bool GenerateServiceFile(bool silent = false) {
 		const auto d = QFile::encodeName(QDir(cWorkingDir()).absolutePath());
 		hashMd5Hex(d.constData(), d.size(), md5Hash);
 
-		QFile::remove(u"%1sylfn.Yukigram._%2.service"_q.arg(
+		QFile::remove(u"%1io.github.yukigram._%2.service"_q.arg(
 			targetPath,
 			md5Hash));
 	}
@@ -735,7 +735,7 @@ void start() {
 				+ cExeName();
 		}
 
-		return u"sylfn.Yukigram"_q;
+		return u"io.github.yukigram"_q;
 	}());
 
 	LOG(("App ID: %1").arg(QGuiApplication::desktopFileName()));

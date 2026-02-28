@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component type="desktop">
-    <id>sylfn.Yukigram</id>
+    <id>io.github.yukigram</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0</project_license>
     <name>Yukigram</name>
@@ -66,10 +66,10 @@
         <content_attribute id="money-gambling">none</content_attribute>
         <content_attribute id="money-advertising">moderate</content_attribute>
     </content_rating>
-    <launchable type="desktop-id">sylfn.Yukigram.desktop</launchable>
+    <launchable type="desktop-id">io.github.yukigram.desktop</launchable>
     <provides>
         <binary>yukigram</binary>
-        <dbus type="session">sylfn.Yukigram</dbus>
+        <dbus type="session">io.github.yukigram</dbus>
         <mediatype>x-scheme-handler/tg</mediatype>
     </provides>
 </component>

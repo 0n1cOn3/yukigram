@@ -12,6 +12,7 @@ permissions:
 env:
   TDESKTOP_API_ID: ${{ secrets.TDESKTOP_API_ID }}
   TDESKTOP_API_HASH: ${{ secrets.TDESKTOP_API_HASH }}
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-linux:
@@ -25,6 +26,7 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+
 
       - name: Read version
         id: version

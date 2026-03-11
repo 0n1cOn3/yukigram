@@ -1,0 +1,128 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  TDESKTOP_API_ID: ${{ secrets.TDESKTOP_API_ID }}
+  TDESKTOP_API_HASH: ${{ secrets.TDESKTOP_API_HASH }}
+
+jobs:
+  build-linux:
+    name: Build Linux x86_64
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Read version
+        id: version
+        run: |
+          source Telegram/build/version
+          echo "version=$AppVersionStr" >> $GITHUB_OUTPUT
+          echo "version_full=$AppVersionStr" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker image
+        uses: actions/cache@v4
+        with:
+          path: /tmp/docker-image.tar
+          key: centos-env-${{ hashFiles('Telegram/build/docker/centos_env/Dockerfile', 'Telegram/build/docker/centos_env/pyproject.toml') }}
+
+      - name: Build Docker image
+        run: |
+          if [ -f /tmp/docker-image.tar ]; then
+            docker load < /tmp/docker-image.tar
+          fi
+          cd Telegram/build/docker/centos_env
+          pip3 install poetry
+          poetry install
+          poetry run gen_dockerfile | DOCKER_BUILDKIT=1 docker build -t tdesktop:centos_env -
+          docker save tdesktop:centos_env > /tmp/docker-image.tar
+
+      - name: Build Yukigram
+        run: |
+          docker run --rm \
+            -u $(id -u) \
+            -v "$PWD:/usr/src/tdesktop" \
+            tdesktop:centos_env \
+            /usr/src/tdesktop/Telegram/build/docker/centos_env/build.sh \
+            -D TDESKTOP_API_ID=${{ secrets.TDESKTOP_API_ID }} \
+            -D TDESKTOP_API_HASH=${{ secrets.TDESKTOP_API_HASH }}
+
+      - name: Package binaries
+        id: package
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          mkdir -p release
+
+          # Main binary
+          if [ -f out/Release/Telegram ]; then
+            cp out/Release/Telegram release/yukigram
+            chmod +x release/yukigram
+          elif [ -f out/Telegram ]; then
+            cp out/Telegram release/yukigram
+            chmod +x release/yukigram
+          else
+            echo "Binary not found! Listing out/:"
+            find out/ -type f -executable 2>/dev/null || find out/ -type f 2>/dev/null | head -20
+            exit 1
+          fi
+
+          # Updater binary
+          if [ -f out/Release/Updater ]; then
+            cp out/Release/Updater release/yukigram-updater
+            chmod +x release/yukigram-updater
+          elif [ -f out/Updater ]; then
+            cp out/Updater release/yukigram-updater
+            chmod +x release/yukigram-updater
+          fi
+
+          # Create tarball
+          cd release
+          tar -czf "yukigram-${VERSION}-linux-x64.tar.gz" yukigram yukigram-updater 2>/dev/null || \
+          tar -czf "yukigram-${VERSION}-linux-x64.tar.gz" yukigram
+
+          echo "tarball=yukigram-${VERSION}-linux-x64.tar.gz" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yukigram-linux-x64
+          path: release/yukigram-*
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Yukigram ${{ steps.version.outputs.version }}
+          body: |
+            ## Yukigram ${{ steps.version.outputs.version }}
+
+            Based on 64Gram / Telegram Desktop.
+
+            ### Installation (Linux x64)
+            ```bash
+            tar xzf yukigram-${{ steps.version.outputs.version }}-linux-x64.tar.gz
+            chmod +x yukigram
+            ./yukigram
+            ```
+          files: |
+            release/${{ steps.package.outputs.tarball }}
+            release/yukigram
+            release/yukigram-updater
+          draft: false
+          prerelease: false
